@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
 
 import org.cc.colorlib.server.ColorServericeImpl;
 import org.cc.colorlib.server.ColorService;
-import org.cc.colorlib.server.Server;
+import org.cc.colorlib.server.ServerStart;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -37,13 +37,13 @@ public class ServerTest {
 		ColorService colorService = new ColorServericeImpl();
 		server = new JsonRpcServer(new ObjectMapper(), colorService);
 		try {
-			streamServer = new StreamServer(server, 50, Server.SERVICE_PORT,
+			streamServer = new StreamServer(server, 50, ServerStart.SERVICE_PORT,
 			        50, InetAddress.getByName("127.0.0.1"));
 			streamServer.start();
 		
 			jsonRpcClient = new JsonRpcClient();
 			
-		//	client = new JsonRpcHttpClient(new URL("http://127.0.0.1:" + Server.SERVICE_PORT + "/ColorService.json"));
+		//	client = new JsonRpcHttpClient(new URL("http://127.0.0.1:" + ServerStart.SERVICE_PORT + "/ColorService.json"));
 			
 			
 			
@@ -66,13 +66,13 @@ public class ServerTest {
 		ColorService colorService = new ColorServericeImpl();
 		server = new JsonRpcServer(new ObjectMapper(), colorService);
 		try {
-			streamServer = new StreamServer(server, 50, Server.SERVICE_PORT,
+			streamServer = new StreamServer(server, 50, ServerStart.SERVICE_PORT,
 			        50, InetAddress.getByName("127.0.0.1"));
 			streamServer.start();
 		
 			jsonRpcClient = new JsonRpcClient();
 			
-		//	client = new JsonRpcHttpClient(new URL("http://127.0.0.1:" + Server.SERVICE_PORT + "/ColorService.json"));
+		//	client = new JsonRpcHttpClient(new URL("http://127.0.0.1:" + ServerStart.SERVICE_PORT + "/ColorService.json"));
 			
 			
 			
@@ -89,7 +89,7 @@ public class ServerTest {
 	@Test
 	public void testCheckInvalidColor() throws UnknownHostException, IOException {
 		
-		Socket socket = new Socket( InetAddress.getByName("127.0.0.1"), Server.SERVICE_PORT);
+		Socket socket = new Socket( InetAddress.getByName("127.0.0.1"), ServerStart.SERVICE_PORT);
 		
 		ColorService userService = ProxyUtil.createClientProxy(
 				this.getClass().getClassLoader(), ColorService.class,
@@ -109,7 +109,7 @@ public class ServerTest {
 	@Test
 	public void testCheckValidColor() throws UnknownHostException, IOException {
 		
-		Socket socket = new Socket( InetAddress.getByName("127.0.0.1"), Server.SERVICE_PORT);
+		Socket socket = new Socket( InetAddress.getByName("127.0.0.1"), ServerStart.SERVICE_PORT);
 		
 		ColorService userService = ProxyUtil.createClientProxy(
 				this.getClass().getClassLoader(), ColorService.class,
@@ -129,7 +129,7 @@ public class ServerTest {
 	@Test
 	public void testCheckColorValue() throws UnknownHostException, IOException {
 		
-		Socket socket = new Socket( InetAddress.getByName("127.0.0.1"), Server.SERVICE_PORT);
+		Socket socket = new Socket( InetAddress.getByName("127.0.0.1"), ServerStart.SERVICE_PORT);
 		
 		ColorService userService = ProxyUtil.createClientProxy(
 				this.getClass().getClassLoader(), ColorService.class,
@@ -150,7 +150,7 @@ public class ServerTest {
 	@Test
 	public void testCheckColorValueEx() throws UnknownHostException, IOException {
 		
-		Socket socket = new Socket( InetAddress.getByName("127.0.0.1"), Server.SERVICE_PORT);
+		Socket socket = new Socket( InetAddress.getByName("127.0.0.1"), ServerStart.SERVICE_PORT);
 		
 		ColorService userService = ProxyUtil.createClientProxy(
 				this.getClass().getClassLoader(), ColorService.class,

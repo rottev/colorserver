@@ -632,6 +632,7 @@ public class BaseTrading {
 				Gson gson = new Gson();
 				JsonElement jsonElement = gson.toJsonTree(a);
 				jsonElement.getAsJsonObject().addProperty("spent", out.getSpentBy() == null ? false : true);
+				jsonElement.getAsJsonObject().addProperty("ouputvalue", value * a.satoshi_multiplyier);
 				return gson.toJson(jsonElement);
 					
 			}

@@ -8,6 +8,23 @@
 		<jackson.version>2.0.2</jackson.version>
 		<jdk.version>1.6</jdk.version>
 </properties>
+	<distributionManagement>
+		<repository>
+			<id>oss-sonatype-release</id>
+			<name>oss-sonatype-release</name>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+			<uniqueVersion>false</uniqueVersion>
+			<layout>default</layout>
+		</repository>
+		<snapshotRepository>
+			<id>oss-sonatype-snapshots</id>
+			<name>oss-sonatype-snapshots</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<uniqueVersion>false</uniqueVersion>
+			<layout>default</layout>
+		</snapshotRepository>
+	</distributionManagement>
+	
  <repositories>
              <!-- bitcoin-j repo -->
         <repository>
@@ -101,7 +118,7 @@
 		                    <manifest>
 		                        <addClasspath>true</addClasspath>
 		                        <classpathPrefix>lib/</classpathPrefix>
-		                        <mainClass>org.cc.colorlib.server.Server</mainClass>
+		                        <mainClass>org.cc.colorlib.server.ServerStart</mainClass>
 		                    </manifest>
 		                </archive>
 		            </configuration>
@@ -112,7 +129,7 @@
 				  <configuration>
 				    <archive>
 				      <manifest>
-				        <mainClass>org.cc.colorlib.server.Server</mainClass>
+				        <mainClass>org.cc.colorlib.server.ServerStart</mainClass>
 				      </manifest>
 				    </archive>
 				    <descriptorRefs>
@@ -273,7 +290,30 @@
 <artifactId>xml-resolver</artifactId>
 <version>1.2</version>
 </dependency>
+	<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.0.0.RC0</version>
 
+			<exclusions>
+				<exclusion>
+					<artifactId>javax.servlet</artifactId>
+					<groupId>org.eclipse.jetty.orbit</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-servlet</artifactId>
+			<version>9.0.0.RC0</version>
+			
+			<exclusions>
+				<exclusion>
+					<artifactId>javax.servlet</artifactId>
+					<groupId>org.eclipse.jetty.orbit</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
   </dependencies>
 </project>

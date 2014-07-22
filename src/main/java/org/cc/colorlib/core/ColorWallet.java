@@ -41,7 +41,12 @@ public class ColorWallet {
 	private WalletWrapper wallet = null;
 	private Map<String, Issuance> IssueanceMap = null;
     private Map<String, Integer> TrackingMap = new HashMap<String, Integer>();
-	private List<Asset> AssetList = null;	
+	private List<Asset> AssetList = null;
+	
+	public static void start()
+	{
+		getInstance();
+	}
 	
 	public static ColorWallet getInstance() {
 		 if(instance == null) {
