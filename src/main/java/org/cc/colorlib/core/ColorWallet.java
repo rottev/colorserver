@@ -101,19 +101,31 @@ public class ColorWallet {
 	}
 	
 	private void trackCololors() throws BlockStoreException, ConfigurationException, ParseException, InterruptedException, ExecutionException {
+		System.out.println("Mode: " +  (Settings.getInstance().isTestNet() ? "Tesntnet" : "Mainnet"));
 		IssueanceMap = BaseTrading.getInstance().getIssuane();
 		AssetList = BaseTrading.getInstance().getAssetList();
+		
+		for(Asset asset : AssetList)
+			System.out.println("found asset " +asset);
+		
 		final NetworkParameters params = Settings.getInstance().getNetowrkParams();
         BlockStore blockStore = new MemoryBlockStore(params);
         BlockChain chain = new BlockChain(params, wallet.getWallet(), blockStore);
+        
+        
         Date fastCatcupDate = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        // set fast catchup to oldest color
         for( Entry<String, Issuance> i : IssueanceMap.entrySet()) {
         	if(sdf.parse(i.getValue().date).compareTo(fastCatcupDate) < 0)
         		fastCatcupDate = sdf.parse(i.getValue().date);
         	TrackingMap.put(i.getValue().geneisistransaction, i.getValue().outputindex);
+        	System.out.println("found issuance " + i.getValue().geneisistransaction +" for asset " + getAssetById(i.getValue().asssetId));
         }
         
+        // set fast catchup to correct date
+        if(wallet.getWallet().getLastBlockSeenTime().after(fastCatcupDate))
+        	fastCatcupDate = wallet.getWallet().getLastBlockSeenTime();
      
         final PeerGroup peerGroup = new PeerGroup(params, chain);
         peerGroup.setFastCatchupTimeSecs(fastCatcupDate.getTime() / 1000);
@@ -134,6 +146,14 @@ public class ColorWallet {
 		
 	}
 	
+	private String getAssetById(String id) {
+		for(Asset asset : AssetList)
+		{
+			if (asset.id.equals(id))
+				return asset.toString();
+		}
+		return "Unknown";
+	}
 	public boolean IsTxColor(String txhash, int voutindex) {
 		return BaseTrading.getInstance().GetColorTransactionSearchHistory(wallet.getWallet(), txhash, voutindex) != null;
 	}

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.googlecode.jsonrpc4j.JsonRpcServer;
-import com.googlecode.jsonrpc4j.loadtest.JsonRpcServiceImpl;
+
 
 public class ColorServiceServlet  extends HttpServlet {
 

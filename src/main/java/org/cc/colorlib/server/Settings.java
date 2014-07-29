@@ -94,5 +94,13 @@ public class Settings {
 	 {
 		 return isTestNet() ? TestNet3Params.get() : MainNetParams.get();
 	 }
+	 
+	 public String getIssuerServerUrl()
+	 {
+		 if(config == null) 
+			 return null;
+		 else 
+			 return config.getString("serverUrl");
+	 }
 	
 }

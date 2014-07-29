@@ -62,58 +62,7 @@ public class ColorDownloadListner extends DownloadListener {
 					printinfo = false;
 					System.out.println("Working, blocks remaining: " + blocksLeft);
 				}
-				if(colorMap.containsKey(t.getHashAsString())){
-					System.out.println("some transaction we will add to wallet: " + t.getHashAsString());
-					// all outputs
-					if(colorMap.get(t.getHashAsString()).intValue() == -1){
-						System.out.println("all outputs");
-						for(TransactionOutput outs : t.getOutputs())
-						{
-							if(outs.getSpentBy() != null){
-								System.out.println("spent");
-								colorMap.put(outs.getSpentBy().getOutpoint().getHash().toString(), -1);
-							}
-						}
-					}
-					else if(t.getOutput(colorMap.get(t.getHashAsString()).intValue()).getSpentBy() != null)
-					{
-						System.out.println("output index: " + colorMap.get(t.getHashAsString()).intValue());
-						String addhash = t.getOutput(colorMap.get(t.getHashAsString()).intValue()).getSpentBy().getOutpoint().getHash().toString();
-						System.out.println("add hash: " + addhash);
-						
-						colorMap.put(addhash, -1);
-					}
-					if(workingWallet.getTransaction(t.getHash()) == null) {
-						System.err.println("AddingColorTx: " + t);
-						workingWallet.addWalletTransaction(new WalletTransaction(Pool.PENDING, t));
-					}
-					deepSearch = true;
-				}
-				if(deepSearch){
-					int insIndex = 0;
-					boolean addToWallet = false;
-					for( TransactionInput ins : t.getInputs()){
-						
-						if(colorMap.containsKey(ins.getOutpoint().getHash().toString()))
-						{
-	
-						//	if(colorMap.get(ins.getOutpoint().getHash().toString()).intValue() == ins.getOutpoint().getIndex()){
-								System.out.println("connecting transaction:\n" + t +"\nto:\n" + ins.getOutpoint().getHash().toString());
-								colorMap.put(t.getHashAsString(), insIndex);
-								addToWallet = true;
-						//	}
-						}							
-						insIndex++;
-					}
-					if(addToWallet) {
-						if(workingWallet.getTransaction(t.getHash()) == null) {
-							System.err.println("AddingColorTx: " + t);
-							workingWallet.addWalletTransaction(new WalletTransaction(Pool.PENDING, t));
-							
-						}
-					}
-				}
-				
+				addTransactionToWalletIfColored(t);
 	        }
 		}
 		catch(Exception ex) {
@@ -180,6 +129,8 @@ public class ColorDownloadListner extends DownloadListener {
 	public void onTransaction(Peer peer, Transaction t) {
 		// TODO Auto-generated method stub
 		super.onTransaction(peer, t);
+		System.out.println("onTransaction: " + t);
+		addTransactionToWalletIfColored(t);
 	}
 
 	@Override
@@ -188,6 +139,59 @@ public class ColorDownloadListner extends DownloadListener {
 		return super.getData(peer, m);
 	}
 
+	private void addTransactionToWalletIfColored(Transaction t) {
 
+		if(colorMap.containsKey(t.getHashAsString())){
+			System.out.println("some transaction we will add to wallet: " + t.getHashAsString());
+			// all outputs
+			if(colorMap.get(t.getHashAsString()).intValue() == -1){
+				System.out.println("all outputs");
+				for(TransactionOutput outs : t.getOutputs())
+				{
+					if(outs.getSpentBy() != null){
+						System.out.println("spent");
+						colorMap.put(outs.getSpentBy().getOutpoint().getHash().toString(), -1);
+					}
+				}
+			}
+			else if(t.getOutput(colorMap.get(t.getHashAsString()).intValue()).getSpentBy() != null)
+			{
+				System.out.println("output index: " + colorMap.get(t.getHashAsString()).intValue());
+				String addhash = t.getOutput(colorMap.get(t.getHashAsString()).intValue()).getSpentBy().getOutpoint().getHash().toString();
+				System.out.println("add hash: " + addhash);
+				
+				colorMap.put(addhash, -1);
+			}
+			if(workingWallet.getTransaction(t.getHash()) == null) {
+				System.err.println("AddingColorTx: " + t);
+				workingWallet.addWalletTransaction(new WalletTransaction(Pool.PENDING, t));
+			}
+			deepSearch = true;
+		}
+		if(deepSearch){
+			int insIndex = 0;
+			boolean addToWallet = false;
+			for( TransactionInput ins : t.getInputs()){
+				
+				if(colorMap.containsKey(ins.getOutpoint().getHash().toString()))
+				{
+
+				//	if(colorMap.get(ins.getOutpoint().getHash().toString()).intValue() == ins.getOutpoint().getIndex()){
+						System.out.println("connecting transaction:\n" + t +"\nto:\n" + ins.getOutpoint().getHash().toString());
+						colorMap.put(t.getHashAsString(), insIndex);
+						addToWallet = true;
+				//	}
+				}							
+				insIndex++;
+			}
+			if(addToWallet) {
+				if(workingWallet.getTransaction(t.getHash()) == null) {
+					System.err.println("AddingColorTx: " + t);
+					workingWallet.addWalletTransaction(new WalletTransaction(Pool.PENDING, t));
+					
+				}
+			}
+		}
+	}
 
 }

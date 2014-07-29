@@ -25,12 +25,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
+import org.cc.colorlib.server.Settings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.bitcoin.core.Address;
@@ -72,6 +74,17 @@ public class BaseTrading {
 	private static List<Fufilment> fufillments = new ArrayList<Fufilment>();
 //	private static List<FufilEventListener> fuflemntEventListeners = new ArrayList<FufilEventListener>();
 	public static int JSON_RPC_PORT = 6712;
+	private static String baseIssueServerUrl = "http://lb1.colorcoins.na.tl/";
+	
+	
+	private String getIssueanceServerUrl(String resource) throws ConfigurationException
+	{
+		String url = Settings.getInstance().getIssuerServerUrl();
+		if( url != null && url != "")
+			return url + (Settings.getInstance().isTestNet() ? "testnet/" : "" ) + resource;
+		return    baseIssueServerUrl + (Settings.getInstance().isTestNet() ? "testnet/" : "" ) + resource;
+	}
+	
 	
 	public static enum ColoringMode {
 		MODE_ORDER_BASED,
@@ -95,6 +108,7 @@ public class BaseTrading {
 	}
 	
 	
+	
 	private static BaseTrading instance = null;
 	
 	public static class MsgSend
@@ -116,8 +130,14 @@ public class BaseTrading {
 	private BaseTrading()
 	{
 		synchronized (lock) {
-			assetsList = fetchAssetList();
-			issuancesList = fetchIssuane();
+			try {
+				assetsList = fetchAssetList();
+				issuancesList = fetchIssuane();
+			} catch (ConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		
 	}
@@ -409,7 +429,10 @@ public class BaseTrading {
 			return new String[] {"Asset Name", "Asset Key", "Asset Symbol", "Signle Satoshi Multiplyer"};
 		}
 		
-		
+		public String toString()
+		{
+			return name+":" + symbol;
+		}
 		
 		
 	}
@@ -433,7 +456,12 @@ public class BaseTrading {
 	{
 		synchronized (lock) {
 			if(forceUpdate) {
-				assetsList = fetchAssetList();
+				try {
+					assetsList = fetchAssetList();
+				} catch (ConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			return assetsList;
 		}
@@ -456,11 +484,11 @@ public class BaseTrading {
 	
 	
 	
-	private List<Asset> fetchAssetList()  {
+	private List<Asset> fetchAssetList() throws ConfigurationException  {
 		
 		List<Asset> result = null;
 		try {
-			result = Request.Get("http://lb1.colorcoins.na.tl/asset"/*"https://dl.dropboxusercontent.com/u/13369450/assets.json" */)
+			result = Request.Get(getIssueanceServerUrl("asset"))
 			        .execute().handleResponse(new ResponseHandler<List<Asset>>() {
 
 						public List<Asset> handleResponse(HttpResponse response)
@@ -520,7 +548,12 @@ public class BaseTrading {
 	public Map<String, Issuance> getIssuane(boolean forceUpdate){
 		synchronized (lock) {
 			if(forceUpdate) {
-				issuancesList = fetchIssuane();
+				try {
+					issuancesList = fetchIssuane();
+				} catch (ConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		return issuancesList;
@@ -543,10 +576,10 @@ public class BaseTrading {
 		}
 	}
 	
-	public Map<String, Issuance> fetchIssuane(){
+	public Map<String, Issuance> fetchIssuane() throws ConfigurationException{
 		Map<String, Issuance> result = null;
 		try {
-			result = Request.Get("http://lb1.colorcoins.na.tl/issue"/*"https://dl.dropboxusercontent.com/u/13369450/issuance.json"*/)
+			result = Request.Get(getIssueanceServerUrl("issue"))
 			        .execute().handleResponse(new ResponseHandler<Map<String,Issuance>>() {
 
 						public Map<String,Issuance> handleResponse(HttpResponse response)
